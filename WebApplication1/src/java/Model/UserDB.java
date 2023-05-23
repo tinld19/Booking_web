@@ -197,6 +197,6 @@ public class UserDB extends DBConnect {
     public static void main(String[] args) throws SQLException, Exception {
         UserDB dt = new UserDB();
         List<User> test = dt.listDoctorByDay("2023-05-20");
-        System.out.println(test.get(0).getFullName());
+        System.out.println(test);
     }
 }

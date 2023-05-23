@@ -69,9 +69,9 @@ public class AvailableDB extends DBConnect {
     
     public static void main(String[] args) throws SQLException, ParseException {
         AvailableDB avDB = new AvailableDB();
-        List<Available> test = avDB.createAvailable();
-        boolean result = avDB.createYourSchedule(test);
-        System.out.println(result);
+//        boolean result = avDB.createYourSchedule(test);
+//        System.out.println(result);
+
     }
     
     public List<Available> createAvailable() throws ParseException{
