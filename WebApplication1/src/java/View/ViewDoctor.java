@@ -26,6 +26,7 @@ public class ViewDoctor {
         Scanner input = new Scanner (System.in);
         String choice = input.nextLine();
         CommonMethods cmmt = new CommonMethods();
+        
         switch(choice){
             case "1":
                 User doctorInfor = cmmt.viewInfo(user.getPhoneNumber());
