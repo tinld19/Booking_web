@@ -5,7 +5,11 @@
 package View;
 
 import Controller.CommonMethods;
+import Controller.DoctorMethods;
+import Model.Available;
 import Model.User;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -17,7 +21,7 @@ public class ViewDoctor {
     public ViewDoctor() {
     }
     
-    public static void menuOfDoctor(User user){
+    public static void menuOfDoctor(User user) throws SQLException{
         System.out.println("1. View Information");
         System.out.println("2. Create a work schedule");
         System.out.println("3. Your appointment");
@@ -26,7 +30,7 @@ public class ViewDoctor {
         Scanner input = new Scanner (System.in);
         String choice = input.nextLine();
         CommonMethods cmmt = new CommonMethods();
-        
+        DoctorMethods dtmt = new DoctorMethods();
         switch(choice){
             case "1":
                 User doctorInfor = cmmt.viewInfo(user.getPhoneNumber());
@@ -36,6 +40,16 @@ public class ViewDoctor {
                 String date = input.nextLine();
                 
             case "3":
+                System.out.println("Choice date");
+                String date_ = input.nextLine();
+                List<Available> listAvailable = dtmt.availableByDateOfDoctor(user, date_);
+                if(!listAvailable.isEmpty()){
+                    for (Available schedule: listAvailable){
+                        System.out.println(user.getFullName() + " " + schedule.getSlot() + " " + schedule.getDate_() + " " + schedule.getStatus_());
+                    }
+                }else{
+                    System.out.println("Trống lịch");
+                }
                 
             case "4":
                 
@@ -63,8 +77,11 @@ public class ViewDoctor {
                 }else{
                     System.out.println("Login fail!");
                 }
+                break;
             case "2":
-                
+            
+                break;
+ 
         }
     }
 }

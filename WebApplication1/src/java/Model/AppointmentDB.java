@@ -42,7 +42,7 @@ public class AppointmentDB extends DBConnect{
     public boolean addAppointment(User user, User doctor, int slot, String date_){
         Date date = Date.valueOf(date_);
         String status_;
-        Appointment appointment = new Appointment(1, user.getUserId(), doctor.getUserId(), user.getUserId(), date, slot, status_ = "Đã đặt");
+        Appointment appointment = new Appointment(2, user.getUserId(), doctor.getUserId(), user.getUserId(), date, slot, status_ = "Đã đặt");
         String sql = "INSERT INTO [dbo].[Appointment]\n"
                 + "           ([appointmentId]\n"
                 + "           ,[create_by]\n"
@@ -107,17 +107,58 @@ public class AppointmentDB extends DBConnect{
         return false;
     }
     
+    public Appointment getInfoAppointment(int patient_id, String date_, int slot){
+        Appointment appointment = null;
+        Date date = Date.valueOf(date_);
+        try {
+            String sql = "SELECT *"
+                    + "  FROM [dbo].[Appointment]\n"
+                    + "WHERE patient_id = ? AND date_ = ? AND slot = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, patient_id);
+            st.setDate(2, date);
+            st.setInt(3, slot);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                appointment = new Appointment(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4),
+                    rs.getDate(5), rs.getInt(6), rs.getString(7));
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return appointment;
+    }
+    
+    public List<Appointment> getAppointmentOfDoctorByDate(User doctor, String date_){
+        Date date = Date.valueOf(date_);
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT * \n" + 
+                "FROM [dbo].[Appointment]\n" + 
+                "WHERE PIC = ? AND [date_] = ?";
+        try{
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setInt(1, doctor.getUserId());
+        st.setDate(2, date);
+        ResultSet rs = st.executeQuery();
+        while (rs.next()) {
+            Appointment s = new Appointment(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getDate(5), rs.getInt(6), rs.getString(7));
+            list.add(s);
+        }
+        }catch (SQLException e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+    
     public static void main(String[] args) throws Exception {
         AppointmentDB apDB = new AppointmentDB();
         UserDB uDB = new UserDB();
         User user = uDB.login("123456789", "123456");
         User doctor = uDB.login("0328860488", "lyminhchau");
-//        boolean result = apDB.addAppointment(user, doctor, 1, "2023-05-20");
-        String status_;
-        String date = "2023-05-20";
-        Date date_ = Date.valueOf(date);
-        Appointment appointment = new Appointment(1, user.getUserId(), doctor.getUserId(), user.getUserId(), date_, 1, status_ = "Đã đặt");
-        boolean result1 = bookingAppointment("Đã đặt", appointment);
-        System.out.println(result1);
+//        boolean result = apDB.addAppointment(user, doctor, 2, "2023-05-20");
+        List<Appointment> list = apDB.getAppointmentOfDoctorByDate(doctor, "2023-05-20");
+        for(Appointment appointment: list){
+            System.out.println(appointment.toString());
+        }
     }
 }

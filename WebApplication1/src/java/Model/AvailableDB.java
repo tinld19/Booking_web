@@ -23,14 +23,15 @@ public class AvailableDB extends DBConnect {
         super();
     }
     
-    public List<Available> getAvailableByDate(User user, Date date) throws SQLException{
+    public List<Available> getAvailableByDate(User user,String date_) throws SQLException{
         List<Available> list = new ArrayList<>();
-        String sql = "SELECT Available.* \n" + 
-                "FROM [dbo].[Available], [dbo].[User_] \n" + 
+        Date date = Date.valueOf(date_);
+        String sql = "SELECT * \n" + 
+                "FROM [dbo].[Available]\n" + 
                 "WHERE [doctor_id] = ? AND [date_] = ?";
         PreparedStatement st = connection.prepareStatement(sql);
         st.setInt(1, user.getUserId());
-        st.setDate(2, (java.sql.Date) date);
+        st.setDate(2, date);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
             Available s = new Available(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getString(4));
@@ -72,21 +73,5 @@ public class AvailableDB extends DBConnect {
 //        boolean result = avDB.createYourSchedule(test);
 //        System.out.println(result);
 
-    }
-    
-    public List<Available> createAvailable() throws ParseException{
-        String dateString = "2023-05-20";
-        Date date = Date.valueOf(dateString);
-        int userId = 1;
-        List<Integer> slots = new ArrayList<>();
-        List<Available> availableList = new ArrayList<>();
-        slots.add(2);
-        slots.add(4);
-        slots.add(5);
-        for(Integer slot: slots){
-            Available schedule = new Available(userId, date, slot, "Đang trống");
-            availableList.add(schedule);
-        }
-        return availableList;
     }
 }
