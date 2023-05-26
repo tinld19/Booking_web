@@ -39,10 +39,10 @@ public class AppointmentDB extends DBConnect{
     }
     
     
-    public boolean addAppointment(User user, User doctor, int slot, String date_){
+    public boolean addAppointment(int create_by, User user, User doctor, int slot, String date_){
         Date date = Date.valueOf(date_);
         String status_;
-        Appointment appointment = new Appointment(2, user.getUserId(), doctor.getUserId(), user.getUserId(), date, slot, status_ = "Đã đặt");
+        Appointment appointment = new Appointment(9, create_by, doctor.getUserId(), user.getUserId(), date, slot, status_ = "Đã đặt");
         String sql = "INSERT INTO [dbo].[Appointment]\n"
                 + "           ([appointmentId]\n"
                 + "           ,[create_by]\n"
@@ -64,12 +64,33 @@ public class AppointmentDB extends DBConnect{
             st.setString(7, appointment.getStatus_());
             st.executeUpdate();
             
-            boolean booking = bookingAppointment(appointment.getStatus_(), appointment);
-            return booking;
+            if(create_by == doctor.getUserId()){
+                 if(!addAvailableOfDoctor(doctor, date_, slot)){
+                     boolean booking = bookingAppointment(appointment.getStatus_(), appointment);
+                     return booking;
+                 }
+            }else{
+                boolean booking = bookingAppointment(appointment.getStatus_(), appointment);
+                return booking;
+            }
         } catch (SQLException e) {
             System.out.println(e);
         }
         return false;
+    }
+    
+    public static boolean addAvailableOfDoctor(User doctor, String date_, int slot) throws SQLException{
+        AvailableDB aDB = new AvailableDB();
+        List<Available> listWork = aDB.getAvailableByDate(doctor, date_);
+        for (Available slot_: listWork){
+            if(slot_.getSlot() == slot && slot_.getStatus_().equalsIgnoreCase("Đang trống")){
+                return false;
+            }
+        }
+        listWork.clear();
+        listWork.add(new Available(doctor.getUserId(), Date.valueOf(date_), slot, "đã đặt"));
+        boolean update = aDB.createYourSchedule(listWork);
+        return update;
     }
     
     public boolean deleteAppointment(Appointment appointment){      
@@ -78,9 +99,9 @@ public class AppointmentDB extends DBConnect{
         boolean booking = bookingAppointment("Đang trống", appointment);
         try{
             PreparedStatement st = connection.prepareStatement(sql);
-            st.setInt(0, appointment.getPIC());
-            st.setDate(1, appointment.getDate_());
-            st.setInt(2, appointment.getSlot());
+            st.setInt(1, appointment.getPIC());
+            st.setDate(2, appointment.getDate_());
+            st.setInt(3, appointment.getSlot());
             st.executeUpdate();
             return booking;
         }catch (SQLException e) {
@@ -107,17 +128,18 @@ public class AppointmentDB extends DBConnect{
         return false;
     }
     
-    public Appointment getInfoAppointment(int patient_id, String date_, int slot){
+    public Appointment getInfoAppointment(int patient_id, int PIC, String date_, int slot){
         Appointment appointment = null;
         Date date = Date.valueOf(date_);
         try {
             String sql = "SELECT *"
                     + "  FROM [dbo].[Appointment]\n"
-                    + "WHERE patient_id = ? AND date_ = ? AND slot = ?";
+                    + "WHERE patient_id = ? AND date_ = ? AND slot = ? AND PIC = ?";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, patient_id);
             st.setDate(2, date);
             st.setInt(3, slot);
+            st.setInt(4, PIC);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 appointment = new Appointment(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4),
@@ -155,10 +177,13 @@ public class AppointmentDB extends DBConnect{
         UserDB uDB = new UserDB();
         User user = uDB.login("123456789", "123456");
         User doctor = uDB.login("0328860488", "lyminhchau");
-//        boolean result = apDB.addAppointment(user, doctor, 2, "2023-05-20");
-        List<Appointment> list = apDB.getAppointmentOfDoctorByDate(doctor, "2023-05-20");
-        for(Appointment appointment: list){
-            System.out.println(appointment.toString());
-        }
+        boolean result = apDB.addAppointment(1, user, doctor, 1, "2023-05-22");
+//        List<Appointment> list = apDB.getAppointmentOfDoctorByDate(doctor, "2023-05-20");
+//        for(Appointment appointment: list){
+//            System.out.println(appointment.toString());
+//        }
+//        Appointment appointment = apDB.getInfoAppointment(3, 1, "2023-05-20", 1);
+//        boolean result1 = apDB.deleteAppointment(appointment);
+        System.out.println(result);
     }
 }

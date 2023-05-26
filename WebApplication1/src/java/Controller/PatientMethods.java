@@ -30,8 +30,8 @@ public class PatientMethods {
         return listAppointment;
     }
     
-    public boolean booking(User user, User doctor, int slot, String date_){
-        boolean result = apDB.addAppointment(user, doctor, slot, date_);
+    public boolean booking(int create_by, User user, User doctor, int slot, String date_){
+        boolean result = apDB.addAppointment(create_by, user, doctor, slot, date_);
         return result;
     }
     

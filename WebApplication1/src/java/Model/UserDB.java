@@ -42,7 +42,7 @@ public class UserDB extends DBConnect {
         }
         return user;
     }
-    
+
     public List<User> getAll() throws SQLException {
         List<User> list = new ArrayList<>();
         String sql = "SELECT [userId]\n"
@@ -67,6 +67,9 @@ public class UserDB extends DBConnect {
     }
 
     public boolean addUser(User user) throws Exception {
+        if(user.isGender()){
+            
+        }
         String sql = "INSERT INTO [dbo].[User_]\n"
                 + "           ([userId]\n"
                 + "           ,[full_name]\n"
@@ -79,19 +82,19 @@ public class UserDB extends DBConnect {
                 + "           ,[role_]\n"
                 + "           ,[note])\n"
                 + "     VALUES "
-                + "           (?,?,?,?,?,?,?,?);";
+                + "           (?,?,?,?,?,?,?,?,?,?);";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
-            st.setInt(0, user.getUserId());
-            st.setString(1, user.getFullName());
-            st.setDate(2, (java.sql.Date) user.getDob());
-            st.setString(3, user.getEmail());
+            st.setInt(1, user.getUserId());
+            st.setString(2, user.getFullName());
+            st.setDate(3, (java.sql.Date) user.getDob());
             st.setBoolean(4, user.isGender());
             st.setString(5, user.getPhoneNumber());
-            st.setString(6, user.getEmail());
-            st.setString(7, user.getAddress_());
-            st.setString(8, user.getRole_());
-            st.setString(9, user.getNote());
+            st.setString(6, user.getPassWord());
+            st.setString(7, user.getEmail());
+            st.setString(8, user.getAddress_());
+            st.setString(9, user.getRole_());
+            st.setString(10, user.getNote());
             st.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -133,8 +136,8 @@ public class UserDB extends DBConnect {
         }
         return false;
     }
-    
-    public User getInfoByPhone(String phone_number){
+
+    public User getInfoByPhone(String phone_number) {
         User user = null;
         try {
             String sql = "SELECT *"
@@ -145,15 +148,15 @@ public class UserDB extends DBConnect {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 user = new User(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getBoolean(4),
-                    rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10));
+                        rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10));
             }
         } catch (SQLException e) {
             System.out.println(e);
         }
         return user;
     }
-    
-    public User getUserbyId(int userId){
+
+    public User getUserbyId(int userId) {
         User user = null;
         try {
             String sql = "SELECT *"
@@ -164,28 +167,28 @@ public class UserDB extends DBConnect {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 user = new User(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getBoolean(4),
-                    rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10));
+                        rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10));
             }
         } catch (SQLException e) {
             System.out.println(e);
         }
         return user;
     }
-    
-    public List<User> listDoctorByDay(String date_){
+
+    public List<User> listDoctorByDay(String date_) {
         Date date = Date.valueOf(date_);
         List<User> listDoctor = new ArrayList<>();
         User user = null;
         try {
-            String sql = "SELECT DISTINCT * \n" +
-                    "FROM User_ INNER JOIN Available ON \n" + 
-                    "date_ = ? AND role_ = 'Doctor';";
+            String sql = "SELECT DISTINCT * \n"
+                    + "FROM User_ INNER JOIN Available ON \n"
+                    + "date_ = ? AND role_ = 'Doctor';";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setDate(1, date);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 user = new User(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getBoolean(4),
-                    rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10));
+                        rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10));
                 listDoctor.add(user);
             }
         } catch (SQLException e) {
@@ -194,9 +197,26 @@ public class UserDB extends DBConnect {
         return listDoctor;
     }
 
+    public int lastIdUser() {
+        int lastId = 0;
+        try {
+            String sql = "SELECT Max(userId)\n"
+                    + "  FROM [Polyclinic].[dbo].[User_]";
+            PreparedStatement st = connection.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                lastId = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return lastId;
+    }
+
     public static void main(String[] args) throws SQLException, Exception {
         UserDB dt = new UserDB();
-        List<User> test = dt.listDoctorByDay("2023-05-20");
-        System.out.println(test);
+//        List<User> test = dt.listDoctorByDay("2023-05-20");
+//        System.out.println(test);
+        System.out.println(dt.lastIdUser());
     }
 }

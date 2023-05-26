@@ -27,8 +27,11 @@ public class CommonMethods {
         return null;
     }
 
-    public boolean register(int userId, String fullName, Date dob, boolean gender, String phoneNumber, 
+    public boolean register(String fullName, String date, boolean gender, String phoneNumber, 
             String passWord, String email, String address, String role, String detail) throws Exception {
+        int userId = userDB.lastIdUser();
+        userId += 1;
+        Date dob = Date.valueOf(date);
         User user = new User(userId, fullName, dob, gender, phoneNumber, passWord, email, address, role, detail);
         boolean result = userDB.addUser(user);
     if (result){
@@ -55,5 +58,11 @@ public class CommonMethods {
     public User getInforByPhone(String phoneNumber){
         User user = userDB.getInfoByPhone(phoneNumber);
         return user;
+    }
+    
+    public static void main(String[] args) throws Exception {
+        CommonMethods cmmt = new CommonMethods();
+        boolean result = cmmt.register("Le Thi Thanh Phuong", "2002-01-01", false, "1234567890", "1234567", "tin@gmail.com", "Quang  Nam", "Patient", null);
+        System.out.println(result);
     }
 }

@@ -40,7 +40,7 @@ public class AvailableDB extends DBConnect {
         return list;
     }
     
-    public boolean createYourSchedule(List<Available> slotInDay){
+    public boolean createYourSchedule(List<Available> listAvailableInDay){
         String sql = "INSERT INTO [dbo].[Available]\n"
                 + "           ([doctor_id]\n"
                 + "           ,[date_]\n"
@@ -50,7 +50,7 @@ public class AvailableDB extends DBConnect {
                 + "           (?,?,?,?);";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
-            for (Available slot: slotInDay){
+            for (Available slot: listAvailableInDay){
             st.setInt(1, slot.getDoctor_id());
             st.setDate(2,slot.getDate_());
             st.setInt(3, slot.getSlot());
@@ -61,10 +61,6 @@ public class AvailableDB extends DBConnect {
         } catch (SQLException e) {
             System.out.println(e);
         }
-        return false;
-    }
-    
-    public boolean re_examination_schedule(){
         return false;
     }
     
