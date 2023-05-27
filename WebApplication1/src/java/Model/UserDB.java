@@ -67,9 +67,6 @@ public class UserDB extends DBConnect {
     }
 
     public boolean addUser(User user) throws Exception {
-        if(user.isGender()){
-            
-        }
         String sql = "INSERT INTO [dbo].[User_]\n"
                 + "           ([userId]\n"
                 + "           ,[full_name]\n"
@@ -87,7 +84,7 @@ public class UserDB extends DBConnect {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, user.getUserId());
             st.setString(2, user.getFullName());
-            st.setDate(3, (java.sql.Date) user.getDob());
+            st.setDate(3, user.getDob());
             st.setBoolean(4, user.isGender());
             st.setString(5, user.getPhoneNumber());
             st.setString(6, user.getPassWord());

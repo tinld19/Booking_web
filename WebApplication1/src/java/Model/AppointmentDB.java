@@ -18,6 +18,7 @@ import java.util.List;
  * @author mac
  */
 public class AppointmentDB extends DBConnect{
+    AppointmentDB apDB = new AppointmentDB();
     public AppointmentDB() {
         super();
     }
@@ -42,7 +43,12 @@ public class AppointmentDB extends DBConnect{
     public boolean addAppointment(int create_by, User user, User doctor, int slot, String date_){
         Date date = Date.valueOf(date_);
         String status_;
-        Appointment appointment = new Appointment(9, create_by, doctor.getUserId(), user.getUserId(), date, slot, status_ = "Đã đặt");
+        int lastId = apDB.lastIdApp();
+        if((Integer) lastId == null){
+            lastId = 0;
+        }
+        lastId += 1;
+        Appointment appointment = new Appointment(1, create_by, doctor.getUserId(), user.getUserId(), date, slot, status_ = "Đã đặt");
         String sql = "INSERT INTO [dbo].[Appointment]\n"
                 + "           ([appointmentId]\n"
                 + "           ,[create_by]\n"
@@ -172,18 +178,37 @@ public class AppointmentDB extends DBConnect{
         return list;
     }
     
+    public int lastIdApp() {
+        int lastId = 0;
+        try {
+            String sql = "SELECT Max(appointmentId)\n"
+                    + "  FROM [Polyclinic].[dbo].[Appointment]";
+            PreparedStatement st = connection.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                lastId = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return lastId;
+    }
+    
     public static void main(String[] args) throws Exception {
         AppointmentDB apDB = new AppointmentDB();
+        AvailableDB avDB = new AvailableDB();
         UserDB uDB = new UserDB();
+        User doctor = uDB.login("1234567890", "1234567");
         User user = uDB.login("123456789", "123456");
-        User doctor = uDB.login("0328860488", "lyminhchau");
-        boolean result = apDB.addAppointment(1, user, doctor, 1, "2023-05-22");
+//        boolean result = apDB.addAppointment(1, user, doctor, 1, "2023-05-25");
 //        List<Appointment> list = apDB.getAppointmentOfDoctorByDate(doctor, "2023-05-20");
 //        for(Appointment appointment: list){
 //            System.out.println(appointment.toString());
 //        }
 //        Appointment appointment = apDB.getInfoAppointment(3, 1, "2023-05-20", 1);
 //        boolean result1 = apDB.deleteAppointment(appointment);
-        System.out.println(result);
+       
+//        List<Available> list_ = avDB.getAvailableByDate(doctor, "2023-05-26");
+//        System.out.println(list_);
     }
 }

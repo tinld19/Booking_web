@@ -32,20 +32,16 @@ public class DoctorMethods {
         return listAppointment;
     }
     
-    public List<Available> createAvailable(User doctor, String date_, List<Integer> slots, String status_) throws ParseException{
+    public boolean createAvailable(User doctor, String date_, List<Integer> slots) throws ParseException{
         Date date = Date.valueOf(date_);
         List<Available> availableList = new ArrayList<>();
         for(Integer slot: slots){
-            if(status_ == null){
-                status_ = "Đang trống";
-            }else{
-                status_ = "Đã đặt";
-            }
-            Available schedule = new Available(doctor.getUserId(), date, slot, status_);
+            Available schedule = new Available(doctor.getUserId(), date, slot, "Đang trống");
             availableList.add(schedule);
         }
-        return availableList;
+        return aDB.createYourSchedule(availableList);
     }
+    
     
     public List<Appointment> viewAppointmentByDate(User doctor,String date_){
         List<Appointment> listAppointment = apDB.getAppointmentOfDoctorByDate(doctor, date_);

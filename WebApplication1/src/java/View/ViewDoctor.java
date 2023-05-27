@@ -11,6 +11,8 @@ import Model.Appointment;
 import Model.Available;
 import Model.User;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,7 +25,7 @@ public class ViewDoctor {
     public ViewDoctor() {
     }
     
-    public static void menuOfDoctor(User user) throws SQLException{
+    public static void menuOfDoctor(User user) throws SQLException, ParseException{
         System.out.println("1. View Information");
         System.out.println("2. Create a work schedule");
         System.out.println("3. Your appointment");
@@ -43,6 +45,12 @@ public class ViewDoctor {
             case "2":
                 System.out.println("Choice date");
                 String date = input.nextLine();
+                List<Integer> slots = new ArrayList<>();
+                slots.add(1);
+                slots.add(2);
+                slots.add(3);
+                slots.add(4);
+                boolean result1 = dtmt.createAvailable(user, date, slots);
                 break;
             case "3":
                 System.out.println("Choice date");

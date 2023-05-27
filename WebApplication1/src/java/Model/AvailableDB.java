@@ -66,8 +66,11 @@ public class AvailableDB extends DBConnect {
     
     public static void main(String[] args) throws SQLException, ParseException {
         AvailableDB avDB = new AvailableDB();
+        UserDB uDB = new UserDB();
 //        boolean result = avDB.createYourSchedule(test);
 //        System.out.println(result);
-
+        User user = uDB.getUserbyId(2);
+        List<Available> list = avDB.getAvailableByDate(user, "2023-05-26");
+        System.out.println(list);
     }
 }

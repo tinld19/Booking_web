@@ -62,7 +62,7 @@ public class CommonMethods {
     
     public static void main(String[] args) throws Exception {
         CommonMethods cmmt = new CommonMethods();
-        boolean result = cmmt.register("Le Thi Thanh Phuong", "2002-01-01", false, "1234567890", "1234567", "tin@gmail.com", "Quang  Nam", "Patient", null);
+        boolean result = cmmt.register("Le Van Do", "2002-01-02", true, "123456789", "123456", "tin19@gmail.com", "Da Nang", "Doctor", null);
         System.out.println(result);
     }
 }
